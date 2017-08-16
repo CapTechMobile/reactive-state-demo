@@ -3,6 +3,7 @@ package atownsend.reactivestate.main.ui
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import atownsend.reactivestate.R
 import atownsend.reactivestate.api.UserModel
 import atownsend.reactivestate.base.BaseMvpActivity
@@ -13,6 +14,7 @@ import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import timber.log.Timber
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 
@@ -29,6 +31,8 @@ class MainActivity : BaseMvpActivity<MainView, MainPresenter>(), MainView {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
     instanceStateRestored = savedInstanceState != null
+
+    Timber.d("debounce value is: " + debounceProvider.provideDebounce())
   }
 
   override fun checkRepoEvents(): Observable<MainUiEvents.CheckReposEvent> =
@@ -57,6 +61,10 @@ class MainActivity : BaseMvpActivity<MainView, MainPresenter>(), MainView {
       val username = editText.text
       reposText.visibility = View.VISIBLE
       reposText.text = "$username's repos include:\n$repoString"
+    }
+
+    state.errorMessage?.let {
+      Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
     }
   }
 }
