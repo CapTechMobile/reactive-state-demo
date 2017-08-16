@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ReactiveState</string>
+  <string name="check_repos_text">Check Repos</string>
+</resources>
