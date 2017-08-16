@@ -20,11 +20,11 @@ class MainPresenter constructor(val model: UserModel) : BasePresenter<MainView, 
     // map the view events into API Actions
     val repoActions: Observable<CheckReposAction> = wrap(MainView::checkRepoEvents)
         .map { CheckReposAction(it.username) }
-        .doOnNext { Timber.d("ACTIONS", "New repo event: $it") }
+        .doOnNext { Timber.tag("ACTIONS").d("New repo event: $it") }
 
     val usernameActions: Observable<CheckUsernameAction> = wrap(MainView::checkUsernameEvents)
         .map { CheckUsernameAction(it.username) }
-        .doOnNext { Timber.d("ACTIONS", "New username event: $it") }
+        .doOnNext { Timber.tag("ACTIONS").d("New username event: $it") }
 
     // merge the view observables into a single stream
     val events: Observable<ApiAction> = Observable.merge(repoActions, usernameActions)
@@ -40,11 +40,11 @@ class MainPresenter constructor(val model: UserModel) : BasePresenter<MainView, 
 
     // apply our transformers to our stream of API actions
     val results: Observable<ApiResult> = events.compose(actionsTransformer)
-        .doOnNext { Timber.d("RESULTS", "API Result is: $it") }
+        .doOnNext { Timber.tag("RESULTS").d("API Result is: $it") }
     // use Observable.scan() to apply each ApiResult to the previous UI model
     val uiModels: Observable<MainUiModel> = results
         .scan(MainUiModel(false, false), this::reduceState)
-        .doOnNext { state -> Timber.d("STATES", "UI state is: $state") }
+        .doOnNext { state -> Timber.tag("STATES").d("UI state is: $state") }
 
     subscribeViewState(uiModels.distinctUntilChanged(), MainView::setViewState)
   }
