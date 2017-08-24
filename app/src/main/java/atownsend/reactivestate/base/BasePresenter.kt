@@ -45,17 +45,19 @@ abstract class BasePresenter<V, VS> where V : MvpView {
     isFirstViewAttach = false
   }
 
-  fun detachView(retaining: Boolean) {
-    // if we're not retaining, dispose of View State subscription, reset state
-    if (!retaining) {
-      viewStateDisposable?.dispose()
-      viewObservableWrappers.clear()
-      isFirstViewAttach = true
-      viewStateSubscribed = false
-    }
+  fun detachView() {
     // clear view disposables and view state disposable
     viewDisposables.clear()
     viewRelayDisposable?.dispose()
+    viewRelayDisposable = null
+  }
+
+  fun destroy() {
+    viewStateDisposable?.dispose()
+    viewObservableWrappers.clear()
+    isFirstViewAttach = true
+    viewStateSubscribed = false
+    viewStateDisposable = null
   }
 
   /**

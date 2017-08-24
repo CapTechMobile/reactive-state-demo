@@ -26,8 +26,15 @@ abstract class BaseMvpActivity<V : MvpView, P : BasePresenter<V, *>> : DaggerApp
   }
 
   override fun onStop() {
-    presenter.detachView(isChangingConfigurations || !isFinishing)
+    presenter.detachView()
     super.onStop()
+  }
+
+  override fun onDestroy() {
+    if (isFinishing && !isChangingConfigurations) {
+      presenter.destroy()
+    }
+    super.onDestroy()
   }
 
   override fun onRetainCustomNonConfigurationInstance(): Any? {
